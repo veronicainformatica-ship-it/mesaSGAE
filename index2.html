@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>IA & Creatividad</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --orange-deep:   #c94e00;
+    --orange-main:   #f26522;
+    --orange-mid:    #f5a623;
+    --orange-light:  #f9c96a;
+    --orange-pale:   #fdebd0;
+    --cream:         #fff8f0;
+    --dark:          #1c0e05;
+    --text-dim:      #9a6030;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ── Gradient background ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 75% 65% at 15% 10%, #f9a53855 0%, transparent 55%),
+      radial-gradient(ellipse 60% 55% at 85% 80%, #f2621544 0%, transparent 55%),
+      radial-gradient(ellipse 100% 90% at 50% 40%, #fef0dc 0%, #fde3b8 100%);
+    z-index: 0;
+  }
+
+  /* ── Floating background letters ── */
+  .bg-letters {
+    position: fixed; inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .bg-letter {
+    position: absolute;
+    font-family: 'Bebas Neue', cursive;
+    color: var(--orange-main);
+    opacity: 0;
+    animation: floatLetter linear infinite;
+    user-select: none;
+  }
+
+  @keyframes floatLetter {
+    0%   { transform: translateY(0)   rotate(var(--rot)); opacity: 0; }
+    10%  { opacity: var(--op); }
+    90%  { opacity: var(--op); }
+    100% { transform: translateY(-110vh) rotate(calc(var(--rot) + 20deg)); opacity: 0; }
+  }
+
+  /* ── Main container ── */
+  .stage {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    width: 100%;
+    padding: 2rem 1rem;
+  }
+
+  /* ── Header ── */
+  .header {
+    text-align: center;
+    margin-bottom: 3.5rem;
+  }
+  .header-eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    font-size: clamp(0.65rem, 1.5vw, 0.8rem);
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--orange-mid);
+    margin-bottom: 0.6rem;
+  }
+  .header-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(1.5rem, 4vw, 2.4rem);
+    color: var(--dark);
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+  }
+  .header-title em {
+    font-style: italic;
+    color: var(--orange-main);
+  }
+
+  /* ── Word display area ── */
+  .word-area {
+    width: 100%;
+    max-width: 780px;
+    min-height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 3rem;
+  }
+
+  /* progress dots */
+  .progress-dots {
+    position: absolute;
+    bottom: -1.8rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+  }
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--orange-pale);
+    border: 1.5px solid var(--orange-light);
+    transition: background 0.4s, transform 0.3s;
+  }
+  .dot.active  { background: var(--orange-main); border-color: var(--orange-main); transform: scale(1.3); }
+  .dot.done    { background: var(--orange-light); border-color: var(--orange-light); }
+
+  /* ── The big word ── */
+  .word-display {
+    display: flex;
+    gap: 0;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .letter-span {
+    font-family: 'Bebas Neue', cursive;
+    font-size: clamp(3.5rem, 10vw, 8rem);
+    color: transparent;
+    background: linear-gradient(135deg, #b83e00 0%, #f26522 45%, #f5a623 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    line-height: 1;
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(30px) scale(0.85);
+    transition: opacity 0.45s cubic-bezier(.22,1,.36,1),
+                transform 0.45s cubic-bezier(.22,1,.36,1);
+    will-change: transform, opacity;
+  }
+
+  .letter-span.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  /* word-level fade wrapper */
+  .word-wrapper {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .word-wrapper.show { opacity: 1; }
+
+  /* ── Counter label ── */
+  .counter-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    min-height: 1.2em;
+    transition: opacity 0.4s;
+  }
+
+  /* ── Button ── */
+  .btn-wrapper {
+    margin-top: 2.5rem;
+    position: relative;
+  }
+
+  .btn-show {
+    position: relative;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: clamp(0.85rem, 2vw, 1rem);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #fff;
+    background: linear-gradient(135deg, #c94e00, #f26522 55%, #f5a623);
+    border: none;
+    border-radius: 60px;
+    padding: 1rem 3rem;
+    cursor: pointer;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.3s;
+    box-shadow: 0 6px 28px #f2652244;
+  }
+
+  .btn-show::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.15) 100%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .btn-show:hover { transform: translateY(-2px); box-shadow: 0 10px 36px #f2652255; }
+  .btn-show:hover::before { opacity: 1; }
+  .btn-show:active { transform: translateY(0); }
+
+  .btn-show:disabled {
+    background: linear-gradient(135deg, #c9a48a, #d9b99a);
+    box-shadow: none;
+    cursor: default;
+    transform: none;
+  }
+
+  /* ripple */
+  .ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.35);
+    transform: scale(0);
+    animation: rippleAnim 0.55s linear;
+    pointer-events: none;
+  }
+  @keyframes rippleAnim {
+    to { transform: scale(4); opacity: 0; }
+  }
+
+  /* ── All-done state ── */
+  .done-msg {
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    transition: opacity 0.6s 0.3s;
+  }
+  .done-msg.show { opacity: 1; pointer-events: auto; }
+  .done-msg p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+    color: var(--orange-deep);
+    font-style: italic;
+    letter-spacing: 0.05em;
+  }
+  .done-msg span {
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  /* ── Word history ── */
+  .history-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    max-width: 680px;
+    min-height: 2.2rem;
+    margin-top: 0.5rem;
+  }
+  .history-tag {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--orange-deep);
+    border: 1px solid var(--orange-light);
+    border-radius: 100px;
+    padding: 0.22rem 0.75rem;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.4s, transform 0.4s;
+    background: rgba(255,255,255,0.6);
+  }
+  .history-tag.show { opacity: 1; transform: scale(1); }
+
+  /* ── Decorative line ── */
+  .deco-line {
+    width: 40px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--orange-light), transparent);
+    margin: 0 auto 0.8rem;
+  }
+
+  /* ── Logos bar ── */
+  .logos-bar {
+    margin-top: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .logos-img {
+    max-width: min(480px, 90vw);
+    height: auto;
+    mix-blend-mode: multiply;
+    opacity: 0.88;
+    filter: contrast(1.05);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 600px) {
+    .word-area { min-height: 120px; }
+    .letter-span { font-size: clamp(3rem, 14vw, 5.5rem); }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-letters" id="bgLetters"></div>
+
+<div class="stage">
+
+  <header class="header">
+    <p class="header-eyebrow">Jornada · 28 d'abril de 2026</p>
+    <div class="deco-line"></div>
+    <h1 class="header-title">Inteligencia artificial<br><em>y propiedad intelectual</em></h1>
+  </header>
+
+  <div class="word-area">
+    <div class="word-wrapper" id="wordWrapper">
+      <div class="word-display" id="wordDisplay"></div>
+    </div>
+    <div class="done-msg" id="doneMsg">
+      <p>Once pilares del futuro creativo.</p>
+      <span>IA · Autoría · Cultura</span>
+    </div>
+    <div class="progress-dots" id="progressDots"></div>
+  </div>
+
+  <p class="counter-label" id="counterLabel">Pulsa para descubrir la primera palabra</p>
+
+  <div class="history-strip" id="historyStrip"></div>
+
+  <div class="btn-wrapper">
+    <button class="btn-show" id="btnShow">Mostrar palabra</button>
+  </div>
+
+  <div class="logos-bar">
+    <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAvAUUDASIAAhEBAxEB/8QAHAABAAICAwEAAAAAAAAAAAAAAAYHAwUBAgQI/8QAQRAAAQMDAwIDBQUEBwkAAAAAAQIDBAAFEQYSIRMxB1FhFBUiMkEjcYGRoQgkQlIYNlV0o7LSFzM0RXJzkrHx/8QAGwEAAwEBAQEBAAAAAAAAAAAAAAIDAQQFBwb/xAArEQACAgEDAgQFBQAAAAAAAAAAAQIRAwQhMQUSMkFhcQYTIpHwFEKBscH/2gAMAwEAAhEDEQA/APsuldXFpbbUtaglKRkkngCqwGor43KfmNzWlDquuIS49lnaCdrffk4IxjBzzkpyRbFheS68ic8ihyWjSsbbqFMpdDiChSQoKB+Ejzz5VyXWhty4j4vl571GmPaO9K6qWhIypaQMZyTXCXmlY2uoO7thXeimFo7805rgqA7kfnXVbraPncSn7ziijbO9K6KdbSMqWkDzJrskgjIOQeaDLOaUrFMlRoUVyVMkNR2G0lS3HVhKUgfUk8CijTLSoafE7ReSoXR1TAODKTDeMf7+qEbMeucVK7fNh3CG3MgSmZUZ0bm3WVhaFDzBHBppY5x3aFU4y4ZnpWNl9p5bqG1biyvYsY7KwDj8iKyUj2GFKUrQFKUoAUpSgBSlKAFKpz9oHxcunh3dbbb7XbIctUplTzi5BVgAHAAAI9arD+k/q3+wLN/if6qR5Ip0z9DovhfqOtwrPhgnF8bo+sqV8m/0n9W/2BZv8T/VV3eA3iBN8Q9KybpcILER+PKLBSySUqG1KgeeR836URnFukJ1D4b1/TsPzs8aj7liUpSnPBFKUoAUpXG5O7buGfKgDmmKUoAYpSlAClKUAKUpQB1d3FpQQElWDgK7Z9apyJp4SvZ7eLXEJEBTzzQWcKUNpISMDCgpQGO2DVvzpUaDDdlzJDUeO0kqcdcUEpQB9ST2FUPeNRxhqlL1ugPuxUSlNusPOlLslR+aPuOC04BlSG89N1B/mrv0UZvu7Tk1TiqstXVLJvdht8u2RW7rES8l9cQqCUyW9igBhWAcKKVbVYB24qL22yaiZvFklydOW8stNltxDbDJEYddSklIU78B2kE7N/PA7VMr3HF80kl2zObXQhuVAUMoG9GFoB8gSAkjyJFRSFZNYR71CnLbS4hlstycSsdZT+VvqCMYISsoCckEBsgDmlwvZq0vczIt06NZL0bqxrTohIWiYj3bIQlh50KW28txtWzJIKkEJJAJGOR2Ix6n9MX6au1SEWi3wvZ0bHUhltpbX7yhRUyELUlCtgJzk5/HFd5UHUr8PTOdNqcNujGNLaltsv7jtaG9I6yR/CrCs5HlzWGVpPWilqEKeWW37lcZGHHfiilxEhLK0Efwne2Sn+EjI+tVjkdJNonKKu9zPLs2s0uXOWthuYmfJYliO3KG5pTMhBSgbsJGWgAcHG5HrXrvmm5t9MmXLszW5642+QhmQptam221N9YZBI+VKgQDzRq1TkswnbZpR62LiymXHmzKQeuEIcBPCiDyofErClZ57VgtenNYqjMxbhLXGdFxFwTJjyi4G1rZd3owQCUdUpOzkYXjPHE3vvaQ/G1MwP6Svs1ueLha4TyLhIZlpaU8HBGWh5I2gKGB9gAn4cg7D/NVnsNNssoZabS22hISlCRgJA7AD6Cq3btWt0y7VLVFZJtz7r7rSJpCXlOvL3hI2/EA0fh3FOCoeVWWDkVLUN2t1/BXAudhUDjx4+stVXGfdSl6yWKSY0SK5jpLkISC6+sHhW0nakHgFKj3IxPKgmjGGGLhqrR85ex52a9OaAOFOR5Pxb0+eFlaT5EDzFLipRk/P8sfJu0vIlXvSzJaA94wA2WC+PtkY6Q/j7/L69qiVxjxdKX+36jsi2mrRd5Tca5R2sFla3fhZkIxwFbylKiOFBeTyKlMuyRZbMhElx9xciOI7jgUEqKck8bQADz3FRjXUaMYenNEw3FLffmxnQknctEeM4l1biv/AASnP1UsVuKm6vnkSaaV0be4znrXY9VXKOkLeidV9tJ7FSI6FAH8RWHSNveh6bTc3L1dJ0iXBQ657VI6iAsp3FSBj4Mk9hxwOK2ttLYdu/W29MzMK3duWmxitNp61aMsJfctiy0JiNvxyXXEBvCjsb3khCAEq+FOAMfdWqSSarewcW3ZovBxy6StLJutyZ1G0+5b2lB643FL7UgqRuK20pWrbyPqAcH76w+DD92maKF5uaNRtyXLa2sP3C4JeakKUjcXGkJWdnIHcA4P31JNPaa0ppUvJtz0ppHQ6Smnri+8hDeCQEpWshPCT2A7V7rXJ01brIxZ4chpmEwz7O00Vk4QnCMAnk9wM+tPLLF3S5Yscb23Kxk3+4L0j4cP3G46icRNs65E5VrWsyHlpYbUFK28nkknPnXqv111QvRmgVSHLrLm3GT+8t2yWhh6Q2Y7q0Ar3JRnAQo4IBIOKsCLaNLQGYCWUMtt6fjFiOC6o+ztKSElJyechAHOTxXgn6Z0XNsEK1uJdTAtLi3I3QlvNlhSdyFALQoK43KTjPbjtTxzQTX08X/ojxy33JLp9hUayxGl+2BYaBUmW91Xkk8lK15O4jOM5PavdWntTtms1sTAjy1iPEbJJffW6tKcknctZKj9e5zWzjSGJLfUjupcRkjKTnkVxSTuzri1VGWlKUox8pftr/1wsX9xX/nqgQlRSVBJKRwTjgVf37a/9cLF/cV/56jOmokbUVgttotVxesupo0BxtECRkRbm0sLVuSQeHClRznvgY7ccs1c2j7R0DW/pOj4JNWnz6erKoSlagpSUqISMqIHb76+sv2MFJT4eXVSlAAXNWSf+2iqj07cIdus+iLlFurVragyHfe0V5wpMhPVypwJH+9SU5RjnBTj6GrA8Lr5Z75b3HJAmOKn6tW5a4KVpQl0JaBSl3II6aU8kDJyBjJrcaqRxfE+tnrtFLEoUrW/s/x+x9JIWhaAtC0qSexByK4bdbcKghaVFJwcHODXz7crvcrJY/EFDMpEJlGoIjThZBLcZp0Mh0pGRgEE5xjuTxU/sGljbta2/UYv9uaEiMqN7HAg9BuYkjclSh1FZKcZCsduO1Xs+bZtAsSblL29dkyxqUpTHmmt1NCuVxtD0O1XU2qS5wJSWQ4pA+u0EgZ9fpVDSpfgdEuL1vn64vbl0YlCHIu3tMopbldtqngnpJVn6Zq/rzc7baISpt1msQoqSEqdeWEJBPA5NUTp3wq1zp6yztP6Y1lpUaOnXRd0EqXbBKlIbWoKUj4yWl8DhZHrVYZMkF9JGcMcn9RZTuorX4bWKFH11rJMgyXi1DkyGCHHcDO07M7lAfXjNbdnXGlndHP6wTd2hYo6VKelqQtKUBJwokEZ4PpUC8YdDM+MNt0/I0zqqA0LHPW8Xk9RxDiijbt3MuIUkjOfhUK2Dvhnc5fgRc/DibeoxlzWHWRNQh9xCAtW4Eh11azj1X92KSV3vyUhVbEi0X4laG1lcXbbprUcS4TWmusthO5Kw3nG7CgCRkjkedZV+IWiEakTptWqLYLwuUYiYXXHWLwSFFG3vnBH51DtAeFuoLZr+3ax1Xqa33OTarN7ogMwLcYyQ2SMqcKlqKzx6Ctt4eeHKNOa51pqeeLfLev90TMirDOXWEJQE7CojzyePOlGPXqbxb8OtN3p+zXrVUKLNjFAkoIWoRyr5Q4pIKUZyPmI71NWXW32UPMuJcbcSFIWk5CgeQQfqKpLVPg1qd+4a1jac1Za4dk1q51Lo1NthfkMko2L6SwsDkZxuBwe1XBpm0x7Bpy22IthptEW3xW4rSnDlRShISCT54FAGwpSlAGOXHYlxnYsllt5h1BQ424kKStJ4IIPcVVN68IT9t7ontLZ2hDUeYFFJZ3Z9nWoclCe7a/nbIGCRwLapVsOoyYXcGTyYo5PERiZb5Vv0pCt3v15DsfaDLkKJW6EpUTuKcZOBnPGdvPc1HTMvSgpseJFqS6kq37ozY244I57HPnViSo0eUgIkModSMkBQyOQQf0JH41qzpXThSUqssFQKSk7mQcg9/wD2afHlivH/AEicsT/aQth25x0LZ/2l29wFP2RLaFbV5zlSsk478ZH6c+1MG9X2b7dadcR3eihpBbYGW0qShaVqUkHB3OYUM/y47VJl6T02sEKssIgo2H7IfLnOPzJr12qzWu1KcVboDEUuABfTRjIBJA/NR/M00s8KuPPsjFhl5kbZsmum4zbQ1dGJRtG9UIEkA858yRx/949MWzapQzLbk6hQ/wBdjYhQa2lpeScjHnnHGPTtUqpUXmb8l9inykQtVh1qJBdZ1a2kBHTQ2qLuTj6E5PKh51JLDGuUWGpu6XBM57qEpdDQR8PGAQOM962FKyWRyVNIaONRditHqnTUO/ezvqfkwbhEUVRZ0VQS8yT3AJBCknHKVAg+Xat5SkjJxdoZpNUyIe6/EEHojVlnUz26yrOrrY8+HgnP4Y9K2OmNMRbK9ImuSpNyukrHtM6UoKcWB2SAAEoQPolIA+vfmt9SneWTVCLGk7PHHhKZXMUHRmS+HR8OdvwoTj1+X9a8sm1ynVK2T0JSd5QFRkKCMlOMfcAseu81tqUvcxu1GnVa5x/5k2OCn/hEH4dxOPu2nb+tcs2mSlSerOStrgqQmMhO47ieT5EYGPStvTFHfIzsRqnrfPW6tTdzDaVrUrHs6TgHGBz3xg/nQW2b0A0boeTlShHQCe3b6DsfPvW1xTFHew7Eao2+aVuL94o3qQpKVezJyklRIPqADjHpnvmuWYFwaSQ3c0Akc/uqeVbMZOD54V+GK2mKUdzBQRwndtG4gqxyQMVzSlKOVZ426O0rqq5W03626hfkMtlLT1sYKkhJPyrOCByM/jUNRpLSLMdH7lr5lMWMtpt9VubS4yylsqIS4W9yeMpGDkk+tfQtKXtTPQxdV1mLGscMjUVwik7HbLHarPHtVsi67TEjow227am3Adyz9XGiRyrsMADnHc17lWjQ7UBUV7ReoV4uK5CS1b3G1ddCUp6qS3tCAoAYxgE5471b1K3tRKWv1Mrub+5WNpa0Ul+4La0VemDdG0IloetznTeB2pGUklOcEZwM8EntWHRz+kdLuvqsuhdTRDtIDire64duflSVElI4B2jA7ValKKJPUZZJpydP1MMGQmXCYlJbdaS82lwIdRtWkEZwoHsRnkVmpStImGbFjTYrkWYw1IYdTtcbcSFJUPIg96gi/B3QiniRbpKI6lbjFRNdDBP/AEbsY9KsGlPDLOHhZOeKE/Ejy2q3wbVAag26IzEitDDbTSAlKR6AV6qUpW23bHSSVIUpSsNFKUoAUpSgD//Z" alt="Logos institucionales" class="logos-img" />
+  </div>
+
+</div>
+
+<script>
+  const WORDS = [
+    "AUTORÍA","ENTRENAMIENTO","DERECHOS","ESTILO","TRANSPARENCIA",
+    "RESPONSABILIDAD","ÉTICA","ORIGINALIDAD","PROTECCIÓN","CREATIVIDAD","AUTENTICIDAD"
+  ];
+
+  let current = 0;
+  let animating = false;
+
+  const wordDisplay   = document.getElementById('wordDisplay');
+  const wordWrapper   = document.getElementById('wordWrapper');
+  const counterLabel  = document.getElementById('counterLabel');
+  const btnShow       = document.getElementById('btnShow');
+  const dotsContainer = document.getElementById('progressDots');
+  const historyStrip  = document.getElementById('historyStrip');
+  const doneMsg       = document.getElementById('doneMsg');
+
+  /* ── Progress dots ── */
+  WORDS.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    d.id = `dot-${i}`;
+    dotsContainer.appendChild(d);
+  });
+
+  /* ── Background floating letters ── */
+  const pool = 'AUTORIAENTRENAMIENTODERECHOSESTILORESPONSABILIDAD';
+  const bg   = document.getElementById('bgLetters');
+
+  for (let i = 0; i < 38; i++) {
+    const el  = document.createElement('span');
+    el.className = 'bg-letter';
+    el.textContent = pool[Math.floor(Math.random() * pool.length)];
+    const size   = 14 + Math.random() * 52;
+    const left   = Math.random() * 100;
+    const delay  = Math.random() * 18;
+    const dur    = 14 + Math.random() * 20;
+    const op     = (0.04 + Math.random() * 0.10).toFixed(3);
+    const rot    = (Math.random() * 40 - 20).toFixed(1) + 'deg';
+    el.style.cssText = `
+      font-size:${size}px;
+      left:${left}%;
+      bottom:-10%;
+      --rot:${rot};
+      --op:${op};
+      animation-duration:${dur}s;
+      animation-delay:-${delay}s;
+    `;
+    bg.appendChild(el);
+  }
+
+  /* ── Ripple ── */
+  btnShow.addEventListener('click', function(e) {
+    const rect = this.getBoundingClientRect();
+    const rip  = document.createElement('span');
+    rip.className = 'ripple';
+    const size = Math.max(rect.width, rect.height);
+    rip.style.cssText = `width:${size}px;height:${size}px;
+      left:${e.clientX - rect.left - size/2}px;
+      top:${e.clientY - rect.top - size/2}px`;
+    this.appendChild(rip);
+    setTimeout(() => rip.remove(), 600);
+    showNextWord();
+  });
+
+  /* ── Show word ── */
+  function showNextWord() {
+    if (animating || current >= WORDS.length) return;
+    animating = true;
+    btnShow.disabled = true;
+
+    const word = WORDS[current];
+
+    // fade-out previous
+    wordWrapper.classList.remove('show');
+
+    setTimeout(() => {
+      // build letters
+      wordDisplay.innerHTML = '';
+      [...word].forEach(char => {
+        const s = document.createElement('span');
+        s.className = 'letter-span';
+        s.textContent = char;
+        wordDisplay.appendChild(s);
+      });
+
+      wordWrapper.classList.add('show');
+
+      // staggered letter animation
+      const letters = wordDisplay.querySelectorAll('.letter-span');
+      letters.forEach((l, i) => {
+        setTimeout(() => { l.classList.add('visible'); }, i * 55 + 80);
+      });
+
+      // update dot
+      document.getElementById(`dot-${current}`).classList.add('active');
+
+      // counter label
+      const remaining = WORDS.length - current - 1;
+      if (remaining > 0) {
+        counterLabel.textContent = `${current + 1} / ${WORDS.length} — Siguiente: pulsa el botón`;
+      } else {
+        counterLabel.textContent = `${WORDS.length} / ${WORDS.length} — Todas las palabras reveladas`;
+      }
+
+      // history tag
+      addHistoryTag(word, current);
+
+      // done check
+      if (current === WORDS.length - 1) {
+        setTimeout(() => {
+          btnShow.disabled = true;
+          btnShow.textContent = 'Completado ✦';
+          doneMsg.classList.add('show');
+        }, 700);
+      }
+
+      // mark dot done on next iteration
+      const prev = current;
+      current++;
+      setTimeout(() => {
+        document.getElementById(`dot-${prev}`).classList.remove('active');
+        document.getElementById(`dot-${prev}`).classList.add('done');
+        animating = false;
+        if (current < WORDS.length) btnShow.disabled = false;
+      }, letters.length * 55 + 500);
+
+    }, wordWrapper.classList.contains('show') ? 200 : 0);
+  }
+
+  function addHistoryTag(word, idx) {
+    setTimeout(() => {
+      const tag = document.createElement('span');
+      tag.className = 'history-tag';
+      tag.textContent = word;
+      historyStrip.appendChild(tag);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => tag.classList.add('show'));
+      });
+    }, 350);
+  }
+</script>
+</body>
+</html>
