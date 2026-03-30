@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Inicio · IA & Propiedad Intelectual</title>
+<title>Final · IA & Propiedad Intelectual</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
 <style>
   :root {
@@ -52,7 +52,7 @@
     z-index: 10;
     width: 100%;
     max-width: 1100px;
-    padding: 2rem 1.5rem 7rem;
+    padding: 2rem 1.5rem 6rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -67,49 +67,43 @@
     text-transform: uppercase;
     color: var(--orange-mid);
     margin-bottom: 0.6rem;
-    text-align: center;
     opacity: 0;
-    animation: fadeUp 0.8s 0.15s ease forwards;
+    animation: fadeUp 0.8s 0.2s ease forwards;
+    text-align: center;
   }
   .deco-line {
     width: 40px; height: 1px;
     background: linear-gradient(90deg, transparent, var(--orange-light), transparent);
     margin: 0 auto 1.4rem;
     opacity: 0;
-    animation: fadeUp 0.8s 0.3s ease forwards;
+    animation: fadeUp 0.8s 0.35s ease forwards;
   }
 
-  /* ── Apertura badge ── */
-  .apertura-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-family: 'Bebas Neue', cursive;
-    font-size: 0.82rem;
-    letter-spacing: 0.28em;
-    color: #fff;
-    background: linear-gradient(135deg, var(--orange-deep), var(--orange-main));
-    border-radius: 100px;
-    padding: 0.32rem 1.1rem;
-    margin-bottom: 1.4rem;
+  /* ── Frase ── */
+  .frase-wrapper {
+    text-align: center;
     opacity: 0;
-    animation: fadeUp 0.8s 0.45s ease forwards;
+    animation: fadeUp 1s 0.5s ease forwards;
+    margin-bottom: 3.5rem;
   }
-
-  /* ── Título ── */
-  .titulo {
+  .frase-pre {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    font-size: clamp(0.78rem, 1.8vw, 0.95rem);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 1rem;
+  }
+  .frase-main {
     font-family: 'Cormorant Garamond', serif;
     font-weight: 300;
-    font-size: clamp(1.7rem, 4.8vw, 3.8rem);
+    font-size: clamp(2rem, 5.5vw, 4.6rem);
+    line-height: 1.18;
     color: var(--dark);
     letter-spacing: 0.02em;
-    line-height: 1.18;
-    text-align: center;
-    margin-bottom: 0.5rem;
-    opacity: 0;
-    animation: fadeUp 1s 0.55s ease forwards;
   }
-  .titulo em {
+  .frase-main em {
     font-style: italic;
     background: linear-gradient(135deg, var(--orange-deep) 0%, var(--orange-main) 50%, var(--orange-mid) 100%);
     -webkit-background-clip: text;
@@ -117,100 +111,85 @@
     color: transparent;
   }
 
-  /* ── Frase clave ── */
-  .frase-clave {
-    display: block;
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 700;
-    font-style: italic;
-    font-size: clamp(1.05rem, 2.8vw, 1.6rem);
-    color: var(--orange-main);
-    text-align: center;
-    max-width: 720px;
-    line-height: 1.5;
-    margin: 1.4rem auto 0;
-    padding: 1.2rem 1.8rem;
-    border: 2.5px solid var(--orange-main);
-    background: #ffffff;
-    border-radius: 1rem;
-    box-shadow: 0 4px 20px rgba(242,101,34,0.12);
+  /* ── Fila de ilustraciones ── */
+  .illustrations {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: clamp(2rem, 6vw, 6rem);
+    width: 100%;
     opacity: 0;
-    animation: fadeUp 0.9s 0.7s ease forwards;
+    animation: fadeUp 1s 0.85s ease forwards;
   }
 
-  /* ── Mesa ilustrada ── */
-  .mesa-scene {
+  .illus-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    flex: 1;
+    max-width: 260px;
+  }
+
+  .illus-label {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 0.78rem;
+    letter-spacing: 0.25em;
+    color: var(--orange-mid);
+    text-transform: uppercase;
+  }
+
+  /* contenedor relativo para partículas absolutas */
+  .illus-scene {
     position: relative;
     width: 100%;
-    max-width: 680px;
-    margin: 2.8rem auto 0;
-    opacity: 0;
-    animation: fadeUp 1s 0.9s ease forwards;
-  }
-  .mesa-scene svg {
-    width: 100%;
-    height: auto;
-    filter: drop-shadow(0 10px 28px rgba(242,101,34,0.15));
+    height: clamp(180px, 28vw, 260px);
   }
 
-  /* Partículas que salen de la mesa */
+  .illus-scene svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 8px 24px rgba(242,101,34,0.18));
+  }
+
+  /* ── Letras / notas que salen ── */
   .particle {
     position: absolute;
     font-family: 'Bebas Neue', cursive;
     pointer-events: none;
     opacity: 0;
     animation: flyOut var(--dur) var(--delay) ease-in-out infinite;
+    transform-origin: center;
   }
+
   @keyframes flyOut {
-    0%   { opacity: 0;   transform: translate(0,0) rotate(0deg) scale(0.5); }
-    12%  { opacity: 0.9; }
-    85%  { opacity: 0.5; }
-    100% { opacity: 0;   transform: translate(var(--tx),var(--ty)) rotate(var(--rot)) scale(1.1); }
+    0%   { opacity: 0;   transform: translate(0,0)                         rotate(0deg)       scale(0.5); }
+    12%  { opacity: 1; }
+    85%  { opacity: 0.6; }
+    100% { opacity: 0;   transform: translate(var(--tx), var(--ty))        rotate(var(--rot)) scale(1.15); }
   }
 
-  /* ── Botones ── */
-  .btn-group {
+  /* ── Botón + pie ── */
+  .bottom {
     display: flex;
+    flex-direction: column;
+    align-items: center;
     gap: 1rem;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-top: 2.6rem;
+    margin-top: 3rem;
     opacity: 0;
-    animation: fadeUp 0.8s 1.2s ease forwards;
+    animation: fadeUp 0.8s 1.4s ease forwards;
   }
 
-  .btn-primary {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+  .tagline {
     font-family: 'DM Sans', sans-serif;
-    font-weight: 500;
-    font-size: clamp(0.82rem, 1.8vw, 0.95rem);
-    letter-spacing: 0.15em;
+    font-weight: 300;
+    font-size: clamp(0.7rem, 1.5vw, 0.82rem);
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: #fff;
-    background: linear-gradient(135deg, #c94e00, #f26522 55%, #f5a623);
-    border: none;
-    border-radius: 60px;
-    padding: 1rem 2.6rem;
-    cursor: pointer;
-    text-decoration: none;
-    transition: transform 0.2s, box-shadow 0.3s;
-    box-shadow: 0 6px 28px rgba(242,101,34,0.27);
-    position: relative; overflow: hidden;
+    color: var(--text-dim);
   }
-  .btn-primary::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.15));
-    opacity: 0; transition: opacity 0.3s;
-  }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 36px rgba(242,101,34,0.38); }
-  .btn-primary:hover::before { opacity: 1; }
-  .btn-primary:active { transform: translateY(0); }
 
-  .btn-secondary {
+  .btn-back {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -223,28 +202,30 @@
     background: transparent;
     border: 2px solid var(--orange-main);
     border-radius: 60px;
-    padding: 1rem 2.6rem;
+    padding: 0.85rem 2.4rem;
     cursor: pointer;
     text-decoration: none;
     transition: transform 0.2s, background 0.25s, color 0.25s, box-shadow 0.3s;
   }
-  .btn-secondary:hover {
-    background: var(--orange-main); color: #fff;
+  .btn-back:hover {
+    background: var(--orange-main);
+    color: #fff;
     transform: translateY(-2px);
     box-shadow: 0 10px 36px rgba(242,101,34,0.35);
   }
 
-  /* ── Logos ── */
+  /* ── Logos fijos ── */
   .logos-bar {
     position: fixed;
     bottom: 1.4rem;
-    left: 0; right: 0;
+    left: 0;
+    right: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 20;
     opacity: 0;
-    animation: fadeUp 0.8s 1.6s ease forwards;
+    animation: fadeUp 0.8s 1.7s ease forwards;
   }
   .logos-img {
     max-width: min(380px, 88vw);
@@ -259,7 +240,8 @@
   }
 
   @media (max-width: 600px) {
-    .btn-group { flex-direction: column; }
+    .illustrations { gap: 1.5rem; }
+    .illus-col { max-width: 150px; }
   }
 </style>
 </head>
@@ -271,17 +253,130 @@
 
   <p class="eyebrow">Jornada · 28 d'abril de 2026</p>
   <div class="deco-line"></div>
-  <div class="apertura-badge">&#9670;&ensp;Apertura de la mesa</div>
 
-  <h1 class="titulo">Inteligencia artificial<br><em>y propiedad intelectual</em></h1>
+  <div class="frase-wrapper">
+    <p class="frase-pre">Reflexión final</p>
+    <h1 class="frase-main">Imaginemos el mundo<br><em>dentro de diez años</em></h1>
+  </div>
 
-  <p class="frase-clave">
-    &ldquo;¿Cómo está impactando la inteligencia artificial en vuestro ámbito profesional?&rdquo;
-  </p>
+  <!-- ═══════════════════════════════════ ILUSTRACIONES ══ -->
+  <div class="illustrations">
 
-  <!-- Botones -->
-  <div class="btn-group">
-    <a href="palabra-ia.html" class="btn-primary">Algoritmo →</a>
+    <!-- LIBRO (izquierda) -->
+    <div class="illus-col">
+      <div class="illus-scene" id="bookScene">
+        <svg viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg">
+          <!-- Sombra -->
+          <ellipse cx="110" cy="192" rx="68" ry="6" fill="rgba(201,78,0,0.10)"/>
+          <!-- Tapa izquierda - exterior -->
+          <path d="M18 38 C16 38 14 40 14 42 L14 172 C14 174 16 176 18 176 L108 168 L108 30 Z" fill="#f5a623"/>
+          <!-- Tapa derecha - exterior -->
+          <path d="M202 38 C204 38 206 40 206 42 L206 172 C206 174 204 176 202 176 L112 168 L112 30 Z" fill="#f26522"/>
+          <!-- Página izquierda interior -->
+          <path d="M108 30 L22 40 L22 168 L108 168 Z" fill="#fff8f0"/>
+          <!-- Página derecha interior -->
+          <path d="M112 30 L198 40 L198 168 L112 168 Z" fill="#fef3e8"/>
+          <!-- Lomo -->
+          <path d="M108 30 C109 80 109 130 108 168 L112 168 C111 130 111 80 112 30 Z" fill="#c94e00"/>
+          <!-- Líneas texto izq -->
+          <line x1="32" y1="62"  x2="100" y2="57"  stroke="#f9c96a" stroke-width="1.4" stroke-linecap="round"/>
+          <line x1="32" y1="76"  x2="100" y2="71"  stroke="#f9c96a" stroke-width="1.4" stroke-linecap="round"/>
+          <line x1="32" y1="90"  x2="100" y2="85"  stroke="#f9c96a" stroke-width="1.4" stroke-linecap="round"/>
+          <line x1="32" y1="104" x2="100" y2="99"  stroke="#f9c96a" stroke-width="1.4" stroke-linecap="round"/>
+          <line x1="32" y1="118" x2="100" y2="113" stroke="#f9c96a" stroke-width="1.4" stroke-linecap="round"/>
+          <line x1="32" y1="132" x2="100" y2="127" stroke="#f9c96a" stroke-width="1.4" stroke-linecap="round"/>
+          <line x1="32" y1="146" x2="80"  y2="142" stroke="#f9c96a" stroke-width="1.4" stroke-linecap="round"/>
+          <!-- Líneas texto dcha -->
+          <line x1="120" y1="57"  x2="188" y2="62"  stroke="#f9c96a" stroke-width="1.4" stroke-linecap="round"/>
+          <line x1="120" y1="71"  x2="188" y2="76"  stroke="#f9c96a" stroke-width="1.4" stroke-linecap="round"/>
+          <line x1="120" y1="85"  x2="188" y2="90"  stroke="#f9c96a" stroke-width="1.4" stroke-linecap="round"/>
+          <line x1="120" y1="99"  x2="188" y2="104" stroke="#f9c96a" stroke-width="1.4" stroke-linecap="round"/>
+          <line x1="120" y1="113" x2="188" y2="118" stroke="#f9c96a" stroke-width="1.4" stroke-linecap="round"/>
+          <line x1="120" y1="127" x2="188" y2="132" stroke="#f9c96a" stroke-width="1.4" stroke-linecap="round"/>
+          <line x1="120" y1="142" x2="165" y2="146" stroke="#f9c96a" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+
+        <!-- Letras que salen del libro -->
+        <span class="particle" style="left:44%;top:32%;font-size:1.5rem;color:#f26522;--tx:-70px;--ty:-100px;--rot:-28deg;--dur:3.0s;--delay:0.0s">A</span>
+        <span class="particle" style="left:47%;top:28%;font-size:1.2rem;color:#c94e00;--tx:-45px;--ty:-120px;--rot:-15deg;--dur:3.6s;--delay:0.7s">R</span>
+        <span class="particle" style="left:41%;top:36%;font-size:1.8rem;color:#f5a623;--tx:-90px;--ty:-80px; --rot:-42deg;--dur:2.8s;--delay:1.3s">T</span>
+        <span class="particle" style="left:50%;top:25%;font-size:1.3rem;color:#f26522;--tx:-30px;--ty:-135px;--rot:-8deg; --dur:4.1s;--delay:0.4s">E</span>
+        <span class="particle" style="left:38%;top:40%;font-size:1.1rem;color:#c94e00;--tx:-100px;--ty:-65px;--rot:-55deg;--dur:3.3s;--delay:1.9s">I</span>
+        <span class="particle" style="left:45%;top:30%;font-size:1.6rem;color:#f5a623;--tx:-55px;--ty:-110px;--rot:-20deg;--dur:3.8s;--delay:1.0s">A</span>
+        <span class="particle" style="left:42%;top:22%;font-size:1.0rem;color:#f26522;--tx:-38px;--ty:-145px;--rot:-35deg;--dur:2.6s;--delay:2.2s">C</span>
+        <span class="particle" style="left:48%;top:34%;font-size:1.4rem;color:#c94e00;--tx:-78px;--ty:-90px; --rot:-12deg;--dur:3.4s;--delay:0.2s">U</span>
+      </div>
+      <p class="illus-label">Autoría</p>
+    </div>
+
+    <!-- GUITARRA (derecha) -->
+    <div class="illus-col">
+      <div class="illus-scene" id="guitarScene">
+        <svg viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg">
+          <!-- Sombra -->
+          <ellipse cx="110" cy="192" rx="55" ry="6" fill="rgba(201,78,0,0.10)"/>
+
+          <!-- Cuerpo guitarra - parte baja (grande) -->
+          <ellipse cx="110" cy="148" rx="52" ry="44" fill="#f5a623"/>
+          <ellipse cx="110" cy="148" rx="44" ry="37" fill="#f26522"/>
+          <!-- Cintura (estrechamiento) -->
+          <rect x="88" y="100" width="44" height="30" fill="#f5a623" rx="4"/>
+          <!-- Cuerpo guitarra - parte alta (pequeña) -->
+          <ellipse cx="110" cy="96" rx="32" ry="26" fill="#f5a623"/>
+          <ellipse cx="110" cy="96" rx="26" ry="21" fill="#f26522"/>
+          <!-- Tapa armónica superior -->
+          <ellipse cx="110" cy="96" rx="22" ry="18" fill="#fde8c0" opacity="0.7"/>
+          <!-- Tapa armónica inferior -->
+          <ellipse cx="110" cy="148" rx="40" ry="34" fill="#fde8c0" opacity="0.5"/>
+          <!-- Boca (soundhole) -->
+          <circle cx="110" cy="148" r="14" fill="#c94e00" opacity="0.8"/>
+          <circle cx="110" cy="148" r="11" fill="#1c0e05" opacity="0.6"/>
+          <!-- Roseta boca -->
+          <circle cx="110" cy="148" r="14" fill="none" stroke="#f9c96a" stroke-width="1.5" opacity="0.8"/>
+          <circle cx="110" cy="148" r="17" fill="none" stroke="#f5a623" stroke-width="0.8" opacity="0.5"/>
+          <!-- Cuello -->
+          <rect x="104" y="18" width="12" height="62" fill="#c94e00" rx="3"/>
+          <!-- Cejilla -->
+          <rect x="102" y="18" width="16" height="4" fill="#1c0e05" rx="2"/>
+          <!-- Clavijero -->
+          <rect x="104" y="8"  width="12" height="14" fill="#c94e00" rx="2"/>
+          <!-- Clavijas -->
+          <circle cx="104" cy="11" r="3" fill="#f9c96a"/>
+          <circle cx="116" cy="11" r="3" fill="#f9c96a"/>
+          <circle cx="104" cy="19" r="3" fill="#f9c96a"/>
+          <circle cx="116" cy="19" r="3" fill="#f9c96a"/>
+          <!-- Cuerdas -->
+          <line x1="105" y1="22" x2="100" y2="130" stroke="#fff8f0" stroke-width="0.7" opacity="0.7"/>
+          <line x1="108" y1="22" x2="106" y2="130" stroke="#fff8f0" stroke-width="0.7" opacity="0.7"/>
+          <line x1="110" y1="22" x2="110" y2="130" stroke="#fff8f0" stroke-width="0.8" opacity="0.8"/>
+          <line x1="112" y1="22" x2="114" y2="130" stroke="#fff8f0" stroke-width="0.7" opacity="0.7"/>
+          <line x1="115" y1="22" x2="120" y2="130" stroke="#fff8f0" stroke-width="0.7" opacity="0.7"/>
+          <!-- Puente -->
+          <rect x="100" y="158" width="20" height="5" fill="#c94e00" rx="2"/>
+          <!-- Trastes -->
+          <line x1="104" y1="38" x2="116" y2="38" stroke="#f9c96a" stroke-width="1" opacity="0.6"/>
+          <line x1="104" y1="50" x2="116" y2="50" stroke="#f9c96a" stroke-width="1" opacity="0.6"/>
+          <line x1="104" y1="62" x2="116" y2="62" stroke="#f9c96a" stroke-width="1" opacity="0.6"/>
+        </svg>
+
+        <!-- Notas musicales que salen -->
+        <span class="particle" style="left:56%;top:30%;font-size:1.8rem;color:#f26522;--tx:75px;--ty:-105px;--rot:22deg; --dur:3.1s;--delay:0.0s">♪</span>
+        <span class="particle" style="left:60%;top:24%;font-size:1.4rem;color:#f5a623;--tx:95px;--ty:-125px;--rot:35deg; --dur:3.7s;--delay:0.8s">♫</span>
+        <span class="particle" style="left:53%;top:36%;font-size:1.6rem;color:#c94e00;--tx:60px;--ty:-90px; --rot:15deg; --dur:2.9s;--delay:1.4s">♩</span>
+        <span class="particle" style="left:58%;top:20%;font-size:2rem;  color:#f26522;--tx:85px;--ty:-140px;--rot:42deg; --dur:4.0s;--delay:0.3s">♬</span>
+        <span class="particle" style="left:52%;top:40%;font-size:1.2rem;color:#f5a623;--tx:50px;--ty:-75px; --rot:8deg;  --dur:3.4s;--delay:2.0s">♪</span>
+        <span class="particle" style="left:62%;top:28%;font-size:1.5rem;color:#c94e00;--tx:110px;--ty:-100px;--rot:50deg;--dur:3.2s;--delay:1.1s">♫</span>
+        <span class="particle" style="left:55%;top:16%;font-size:1.1rem;color:#f26522;--tx:70px;--ty:-150px;--rot:28deg; --dur:2.7s;--delay:2.4s">♩</span>
+        <span class="particle" style="left:50%;top:44%;font-size:1.3rem;color:#f5a623;--tx:42px;--ty:-65px; --rot:18deg; --dur:3.9s;--delay:0.6s">♬</span>
+      </div>
+      <p class="illus-label">Creatividad</p>
+    </div>
+
+  </div><!-- /illustrations -->
+
+  <div class="bottom">
+    <p class="tagline">IA · Autoría · Cultura · Futuro</p>
+    <a href="dilema2.html" class="btn-back">← Volver</a>
   </div>
 
 </div>
@@ -292,26 +387,31 @@
 </div>
 
 <script>
+/* Partículas suaves de fondo */
 const canvas = document.getElementById('bgCanvas');
 const ctx    = canvas.getContext('2d');
-function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-resize();
-window.addEventListener('resize', resize);
 
-const SYMS   = ['♪','♫','♩','♬','A','R','T','0','1','∞','©','®'];
+function resize() {
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', () => { resize(); });
+
+const SYMS   = ['♪','♫','♩','♬','A','R','T','E','I','C','U','Ó'];
 const COLORS = ['#f26522','#f5a623','#c94e00','#f9c96a'];
 
-const pts = Array.from({length: 38}, () => ({
-  x: Math.random() * window.innerWidth,
-  y: Math.random() * window.innerHeight,
-  vy: -(0.22 + Math.random() * 0.5),
-  vx: (Math.random() - 0.5) * 0.28,
-  size: 9 + Math.random() * 16,
-  alpha: 0.03 + Math.random() * 0.08,
-  sym: SYMS[Math.floor(Math.random() * SYMS.length)],
+const pts = Array.from({length: 40}, () => ({
+  x:     Math.random() * window.innerWidth,
+  y:     Math.random() * window.innerHeight,
+  vy:    -(0.25 + Math.random() * 0.55),
+  vx:    (Math.random() - 0.5) * 0.3,
+  size:  9 + Math.random() * 18,
+  alpha: 0.03 + Math.random() * 0.09,
+  sym:   SYMS[Math.floor(Math.random() * SYMS.length)],
   color: COLORS[Math.floor(Math.random() * COLORS.length)],
-  rot: Math.random() * Math.PI * 2,
-  rotV: (Math.random() - 0.5) * 0.01,
+  rot:   Math.random() * Math.PI * 2,
+  rotV:  (Math.random() - 0.5) * 0.012,
 }));
 
 function draw() {
